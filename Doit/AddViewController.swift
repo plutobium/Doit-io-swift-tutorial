@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class AddViewController: UIViewController {
 
@@ -17,14 +18,19 @@ class AddViewController: UIViewController {
     
     @IBAction func saveTaskButtonAction(_ sender: Any) {
         
+        // CoreData
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let coredataTask = CoredataTask(context:context)
+        
         // create new Task object
-        let task = Task()
-        task.name = taskNameTextField.text!
-        task.important = taskImportantSwitch.isOn
+        //let task = Task() without coredata
+        coredataTask.name = taskNameTextField.text!
+        coredataTask.important = taskImportantSwitch.isOn
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
         
         // update previous data
-        previousViewController.tasks.append(task)
-        previousViewController.tasksTableView.reloadData()
+        //previousViewController.tasks.append(coredataTask)
+        //previousViewController.tasksTableView.reloadData()
         
         // move back
         navigationController!.popViewController(animated: true)

@@ -12,9 +12,25 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     @IBOutlet weak var tasksTableView: UITableView!
     
-    var tasks : [Task] = []
+    var tasks : [CoredataTask] = []
     var selectedIndex = 0
     
+    func updateTasks() {
+        // CoreData
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do {
+            tasks = try context.fetch(CoredataTask.fetchRequest()) as! [CoredataTask]
+            tasksTableView.reloadData()
+            print(tasks)
+        } catch {
+            print("[TaskViewController] Oops, fetch failed.")
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        updateTasks()
+    }
+        
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
@@ -23,9 +39,9 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
         let task = tasks[indexPath.row]
         let cell = UITableViewCell()
         if(task.important) {
-            cell.textLabel?.text = "! \(task.name)"
+            cell.textLabel?.text = "! \(task.name!)"
         } else {
-            cell.textLabel?.text = task.name
+            cell.textLabel?.text = task.name!
         }
         return cell
     }
@@ -37,16 +53,17 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         print("Preparing for Segue: " + segue.identifier!)
-        
+        /*
         if segue.identifier == "detailSegue"  {
             let addVC = segue.destination as! AddViewController
             addVC.previousViewController = self
-        }
+        }*/
+        
         
         if segue.identifier == "selectTaskSegue" {
             let completeVC = segue.destination as! CompleteTaskViewController
             completeVC.previousViewController = self
-            completeVC.task = sender as! Task
+            completeVC.task = sender as? CoredataTask
         }
         
     }
@@ -60,11 +77,12 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         // --------------------------------
-        tasks = makeTasks()
+        //tasks = makeTasks()
         tasksTableView.dataSource = self
         tasksTableView.delegate   = self
     }
     
+    /*
     func makeTasks() -> [Task] {
         let task1 = Task()
         task1.important = true;
@@ -76,6 +94,6 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
         task3.important = false;
         task3.name = "mow lawn"
         return [task1,task2,task3]
-    }
+    }*/
 }
 

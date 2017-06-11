@@ -11,20 +11,22 @@ import UIKit
 class CompleteTaskViewController: UIViewController {
     
     var previousViewController:TasksViewController! // or ()
-    var task : Task?
-    
+    var task : CoredataTask? = nil
     
     @IBOutlet weak var taskNameLabel: UILabel!
     
     @IBAction func removeButtonAction(_ sender: Any) {
-        previousViewController.tasks.remove(at:previousViewController.selectedIndex);
-        previousViewController.tasksTableView.reloadData()
+        //previousViewController.tasks.remove(at:previousViewController.selectedIndex);
+        //previousViewController.tasksTableView.reloadData()
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        context.delete(task!)
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
         navigationController!.popViewController(animated: true)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        taskNameLabel.text = task?.name
+        taskNameLabel.text = task?.name!
         // Do any additional setup after loading the view.
     }
 
